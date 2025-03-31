@@ -1,0 +1,156 @@
+---
+title: My dynamic report
+output: html_fragment
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=FALSE, message=FALSE, warning=FALSE, error=FALSE)
+
+```
+
+```{css}
+
+```
+
+## PRODUCING OF THREE BAR PLOTS 
+
+&nbsp;&nbsp;
+
+### PLOT  ( 1 )
+
+
+**Here I am displaying Bar Plot of the mean value from the given total subscribers inputs, divided by each of the given YouTube categories. Each category filled by a  different colour **
+
+&nbsp;
+
+```{r, echo = FALSE}
+
+library(tidyverse)
+
+
+logged_data <- read_csv("https://docs.google.com/spreadsheets/d/e/2PACX-1vRUv7cL5VGV613KuJqOcl-UlJ_NGABdo2D939DrGecYDMq6Ehe-3quxm9pkQhncro2IScRsfj1esVRx/pub?gid=142813942&single=true&output=csv")
+
+latest_data <- (logged_data) %>%
+  rename(All_YouTube_category_Inputs = 16,
+         Total_Subscribers = 17,
+         Total_Views = 18)
+
+mean_values_total_subscribers <- latest_data %>%
+  group_by(All_YouTube_category_Inputs) %>%
+  summarize(mean_value = mean(Total_Subscribers, na.rm = TRUE))
+
+
+
+
+mean_values_total_subscribers_bar_plot <- ggplot(mean_values_total_subscribers, aes(x = All_YouTube_category_Inputs, y = mean_value, fill = All_YouTube_category_Inputs)) +
+  geom_col() +
+  labs(title = "Mean Total Subscribers Value by Category",
+       x = "YouTube Category Inputs",
+       y = "Mean Value in Millions") +
+  theme_minimal() +
+  scale_fill_brewer(palette = "Set2")
+
+
+mean_values_total_subscribers_bar_plot
+
+
+
+highest_max_subscribers <- mean_values_total_subscribers %>%
+  filter(mean_value == max(mean_value))
+
+
+ROUNDED_SUBSCRIBERS_VALUE <- round(highest_max_subscribers $ mean_value, 2)
+ 
+
+
+```
+
+
+The highest value mean by the category is '`r highest_max_subscribers$All_YouTube_category_Inputs`' with value of `r ROUNDED_SUBSCRIBERS_VALUE` Million!.
+
+
+
+
+
+&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+### PLOT  ( 2 )
+
+
+**Here I am displaying Bar Plot of the MAX Value from the given total views inputs, divided by each of the given YouTube categories. Each category filled by a  different colour **
+
+&nbsp;
+
+```{r, echo = FALSE}
+
+max_values_total_views <- latest_data %>%
+  group_by(All_YouTube_category_Inputs) %>%
+  summarize(max_value = max(Total_Views, na.rm = TRUE))
+
+
+max_values_total_viewers_bar_plot <- ggplot(max_values_total_views, aes(x = All_YouTube_category_Inputs, y = max_value, fill = All_YouTube_category_Inputs)) +
+  geom_col() +
+  labs(title = "Maximum Total Views Value by Category",
+       x = "YouTube Category Inputs",
+       y = "Maximum Value in Millions") +
+  theme_minimal() +
+  scale_fill_brewer(palette = "Set2")
+
+max_values_total_viewers_bar_plot
+
+
+highest_from_max_views <- max_values_total_views %>%
+  filter(max_value == max(max_value))
+
+
+
+ROUNDED_TOTAL_VIEWERS_VALUE <- round(highest_from_max_views$max_value,2)
+
+
+
+```
+
+
+The highest value total views by the category is '`r highest_from_max_views$All_YouTube_category_Inputs`' with value of `r ROUNDED_TOTAL_VIEWERS_VALUE` Million!.
+
+&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+### PLOT  ( 3 )
+
+
+**Here I am displaying a Grouped Bar Plot of the total from the given Total Subscribers and Total Views, divided by each of the given YouTube categories. Each category filled by a  different colour. All values in Millions.**
+
+&nbsp;
+
+```{r, echo = FALSE}
+
+latest_data_long_formatted <- pivot_longer(latest_data, 
+                        cols = c(Total_Subscribers, Total_Views),
+                        names_to = "Variable",
+                        values_to = "Value")
+
+
+Two_values_Grouped_Plot <- ggplot(latest_data_long_formatted, aes(x = Variable, y = Value, fill = All_YouTube_category_Inputs)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Subscribers x Views Grouped Bar Plot",
+       x = "YouTube Category Inputs",
+       y = "Value in Millions")
+
+
+Two_values_Grouped_Plot
+
+
+
+
+
+
+```
+
+
+
+
+
+
+
